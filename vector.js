@@ -1034,11 +1034,26 @@ var c = 1;
 var fscreen;
 var astcount;
 var interval=100;
+var env;
+var env2;
+var noiseosc;
+var exposc;
 function setup() {
+  
   starttime = Date.now();
   frameRate(25);
   createCanvas(512 ,360);
+  
   fscreen = fullscreen();
+  env = new p5.Envelope(0.05,1.0,0.05,0.0);
+  env2 = new p5.Envelope(0.05,1.0,0.3,0.0);
+  noiseosc = new p5.Oscillator('square');
+  noiseosc.freq(80);
+  noiseosc.start();
+  exposc = new p5.Noise('brown');
+  exposc.start();
+  env.play(noiseosc);
+  env2.play(exposc);
   background(0,0,0);
   palette = Array();
   palette.push(color(0,0,0));
@@ -1410,6 +1425,7 @@ function updateGame() {
           {
             lastshoot = runtime;
             player.shoot();
+            env.play(noiseosc);
           }
         }
         player.updatePosition();
@@ -1429,6 +1445,7 @@ function updateGame() {
                 }
                 if (asteroids[n].collidesWithProjectiles(player.getProjectiles()))
                 {
+                    env2.play(exposc);
                     //music.baDing.play();
                     createAsteroidsFromAsteroid(asteroids[n], 3);
                     if(getAsteroidCount()==0)
